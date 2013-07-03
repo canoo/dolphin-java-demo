@@ -32,6 +32,7 @@ import org.opendolphin.demo.FX;
 
 import java.util.*;
 
+import static org.opendolphin.demo.DemoStyle.*;
 import static org.opendolphin.demo.lazy.LazyLoadingConstants.ATT.*;
 import static org.opendolphin.demo.lazy.LazyLoadingConstants.TYPE.*;
 
@@ -191,8 +192,7 @@ public class LazyLoadingView extends Application {
 
 
         Scene scene = new Scene(borderPane, 700, 500);
-        scene.setFill(Color.GRAY);
-        org.opendolphin.demo.DemoStyle.blueStyle(scene);
+        defaultStyle(scene);
         stage.setScene(scene);
         stage.setTitle("Dolphin lazy loading demo");
         stage.show();
