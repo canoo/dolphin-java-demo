@@ -1,0 +1,121 @@
+/*
+ * Copyright 2012-2013 Canoo Engineering AG.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+
+ext {
+    jfxLibDir = locateJfxLibDir()
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "net.saliman:gradle-cobertura-plugin:1.1.1"
+    }
+}
+
+subprojects {
+    apply plugin: 'cobertura'
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'eclipse'
+
+    sourceCompatibility = '1.6'
+    targetCompatibility = '1.6' // some users are still on 1.6
+    archivesBaseName = "dolphin-java-demo-${project.name}"
+
+    repositories {
+        flatDir name: 'javafx', dirs: [jfxLibDir]
+        mavenCentral()
+        mavenLocal()
+    }
+
+    dependencies {
+        testRuntime 'net.saliman:gradle-cobertura-plugin:1.1.1'
+    }
+
+    task makeDirs(description: 'make all dirs for project setup') << {
+        def sources = [sourceSets.main, sourceSets.test]
+        sources*.allSource*.srcDirs.flatten().each { File srcDir ->
+            println "making $srcDir"
+            srcDir.mkdirs()
+        }
+    }
+
+
+}
+
+String locateJfxLibDir() {
+    def javaFxHome = System.env['JAVAFX_HOME'] ?: ''
+    def javaHome = System.env['JAVA_HOME'] ?: ''
+    def jdk7 = System.getProperty('java.version')[0..2].toDouble() == 1.7
+    def jdk8 = System.getProperty('java.version')[0..2].toDouble() == 1.8
+    def jdkHome = System.properties.'java.home' ?: ''
+
+    def result = "$javaFxHome/rt/lib"
+    if (new File("$result/jfxrt.jar").exists()) {
+        println "using javafx from explicit JAVAFX_HOME: $result"
+        return result
+    }
+    result = "$jdkHome/lib/"
+    if (jdk7 && new File("$result/jfxrt.jar").exists()) {
+        println "using javafx from current java 7: $result"
+        return result
+    }
+    result = "$jdkHome/lib/ext/"
+    if (jdk8 && new File("$result/jfxrt.jar").exists()) {
+        println "using javafx from current java 8: $result"
+        return result
+    }
+    result = "$javaHome/jre/lib/"
+    if (new File("$result/jfxrt.jar").exists()) {
+        println "using javafx from explicit JAVA_HOME: $result"
+        return result
+    }
+    result = "$javaHome/lib/"
+    if (new File("$result/jfxrt.jar").exists()) {
+        println "using javafx from explicit JAVA_HOME: $result"
+        return result
+    }
+    println "please use a Java Version 7_06+"
+    println " or set JAVA_HOME   to a dir that contains the jre/lib/jfxrt.jar"
+    println " or set JAVAFX_HOME to a dir that contains the rt/lib/jfxrt.jar"
+    System.exit 1
+}
+
+
+task wrap(type: Wrapper, description: "create a gradlew") {
+    gradleVersion = '1.5'
+}
+
+def demos = new File(rootDir, 'combined/src/main/java/org/opendolphin/demo')
+        .list()
+        .findAll { it.startsWith('Start') && it.endsWith('Demo.java') }
+        .collect { it - 'Start' - 'Demo.java' }
+
+task listDemos(description: "List all available demos") << { demos.sort().each { println "gradlew ${it}Demo" } }
+
+demos.each { demo ->
+    task "${demo}DemoPreparation"(description: "internal") << {
+        project(':combined').ext.set('demoApplicationName', demo)
+    }
+    def group = demo.startsWith('Grails') ? 'Demo (server required)' : 'Demo'
+    task "${demo}Demo"(group: group, dependsOn: ["${demo}DemoPreparation", ':combined:run'],
+            description: "start the ${demo} demo") {}
+}
