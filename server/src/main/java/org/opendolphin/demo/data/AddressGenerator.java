@@ -18,12 +18,12 @@ public class AddressGenerator extends AbstractValueGenerator<Address> {
     private final List<String> cities = new ArrayList<String>();
 
     public List<Address> getAddressList(int numEntries) {
-        log.info("initializing cities...");
+        log.info("initializing " + (END_ZIP - START_ZIP) + " cities...");
         for (int i = START_ZIP; i < END_ZIP; i++) {
             cities.add(i + " " + cityNameGenerator.randomValue());
         }
         List<Address> addressList = new ArrayList<Address>();
-        log.info("initializing addresses...");
+        log.info("initializing " + numEntries + " addresses...");
         for (int i=0; i < numEntries; i++) {
             addressList.add(randomValue());
         }
