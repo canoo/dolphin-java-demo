@@ -68,19 +68,22 @@ public class LazyLoadingView extends Application {
         gauge.setEffect(DropShadowBuilder.create().radius(20).color(new Color(0,0,0,0.4)).build());
 
 
-        TableColumn nameCol = TableColumnBuilder.create().text("Name").prefWidth(150).build();
+        TableColumn<Map, String> nameCol = new TableColumn<Map, String>();
+        nameCol.setPrefWidth(150);
         nameCol.setSortable(false); // sorting needs all data to be loaded
-        TableColumn cityCol = TableColumnBuilder.create().text("City").prefWidth(150).build();
+        TableColumn<Map, String> cityCol = new TableColumn<Map, String>();
+        cityCol.setPrefWidth(150);
         cityCol.setSortable(false); // sorting needs all data to be loaded
-        TableView table = TableViewBuilder.create().id("table").prefWidth(300).build();
+        TableView<Map> table = new TableView<Map>();
+        table.setPrefWidth(300);
         table.getColumns().add(nameCol);
         table.getColumns().add(cityCol);
         table.setItems(observableList);
 
         // cell values are lazily requested from JavaFX and must return an observable value
-        nameCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures, ObservableValue>() {
+        nameCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Map, String>, ObservableValue<String>>() {
             @Override
-            public ObservableValue call(TableColumn.CellDataFeatures cellDataFeatures) {
+            public ObservableValue<String> call(TableColumn.CellDataFeatures cellDataFeatures) {
                 Map valueMap = (Map) cellDataFeatures.getValue();
                 String lazyId = valueMap.get("id").toString(); // it.value['id'];
                 final SimpleStringProperty placeholder = new SimpleStringProperty("...");
@@ -93,9 +96,9 @@ public class LazyLoadingView extends Application {
                 return placeholder;
             }
         });
-        cityCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures, ObservableValue>() {
+        cityCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Map, String>, ObservableValue<String>>() {
             @Override
-            public ObservableValue call(TableColumn.CellDataFeatures cellDataFeatures) {
+            public ObservableValue<String> call(TableColumn.CellDataFeatures cellDataFeatures) {
                 Map valueMap = (Map) cellDataFeatures.getValue();
                 String lazyId = valueMap.get("id").toString(); // it.value['id'];
                 final SimpleStringProperty placeholder = new SimpleStringProperty("...");
@@ -110,10 +113,10 @@ public class LazyLoadingView extends Application {
         });
 
         // when a table row is selected, we fill the mold and the detail view gets updated
-        table.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+        table.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Map>() {
             @Override
-            public void changed(ObservableValue selected, Object o, Object oldVal) {
-                Map selectedPm = (Map) selected.getValue();
+            public void changed(ObservableValue<? extends Map> selected, Map o, Map oldVal) {
+                Map selectedPm = selected.getValue();
                 String pmId = (selectedPm == null) ? null : selectedPm.get("id").toString();
                 dolphin.getClientModelStore().withPresentationModel(pmId, new WithPresentationModelHandler() {
                     public void onFinished(ClientPresentationModel presentationModel) {
