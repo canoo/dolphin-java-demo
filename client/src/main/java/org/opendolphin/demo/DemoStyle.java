@@ -23,8 +23,8 @@ import javafx.scene.paint.Color;
 public class DemoStyle {
 
     public static void defaultStyle(Scene scene){
-        Stop firstStop = new Stop(0, Color.LIGHTGRAY);
-        Stop secondStop = new Stop(1, Color.DARKGRAY);
+        Stop firstStop = new Stop(0, Color.BLACK);
+        Stop secondStop = new Stop(1, Color.LIGHTGRAY);
         scene.setFill(RadialGradientBuilder.create().stops(firstStop, secondStop).build());
         scene.getStylesheets().add("demo.css");
     }

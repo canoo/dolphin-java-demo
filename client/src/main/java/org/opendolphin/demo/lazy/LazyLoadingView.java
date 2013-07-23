@@ -69,9 +69,11 @@ public class LazyLoadingView extends Application {
 
 
         TableColumn<Map, String> nameCol = new TableColumn<Map, String>();
+        nameCol.setText("Name");
         nameCol.setPrefWidth(150);
         nameCol.setSortable(false); // sorting needs all data to be loaded
         TableColumn<Map, String> cityCol = new TableColumn<Map, String>();
+        cityCol.setText("City");
         cityCol.setPrefWidth(150);
         cityCol.setSortable(false); // sorting needs all data to be loaded
         TableView<Map> table = new TableView<Map>();
@@ -100,7 +102,7 @@ public class LazyLoadingView extends Application {
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures cellDataFeatures) {
                 Map valueMap = (Map) cellDataFeatures.getValue();
-                String lazyId = valueMap.get("id").toString(); // it.value['id'];
+                String lazyId = valueMap.get("id").toString();
                 final SimpleStringProperty placeholder = new SimpleStringProperty("...");
                 dolphin.getClientModelStore().withPresentationModel(lazyId, new WithPresentationModelHandler() {
                     public void onFinished(ClientPresentationModel presentationModel) {
@@ -126,12 +128,12 @@ public class LazyLoadingView extends Application {
             }
         });
 
-        final TextField nameField = TextFieldBuilder.create().id("nameField").prefColumnCount(10).build();
-        final TextField cityField = TextFieldBuilder.create().id("cityField").prefColumnCount(10).build();
-        final TextField phoneField = TextFieldBuilder.create().id("phoneField").prefColumnCount(10).build();
-        final Label lazilyLoadedField = LabelBuilder.create().id("lazilyLoadedField").build();
-        final Label tableSizeField = LabelBuilder.create().id("tableSizeField").build();
-        final Label selectedIndexField = LabelBuilder.create().id("selectedIndexField").build();
+        final TextField nameField = new TextField();
+        final TextField cityField = new TextField();
+        final TextField phoneField = new TextField();
+        final Label lazilyLoadedField = new Label();
+        final Label tableSizeField = new Label();
+        final Label selectedIndexField = new Label();
 
         GridPane centerView = GridPaneBuilder.create().hgap(10).vgap(10).padding(new Insets(20, 20, 20, 20)).build();
         centerView.getColumnConstraints().add(ColumnConstraintsBuilder.create().halignment(HPos.RIGHT).build());
