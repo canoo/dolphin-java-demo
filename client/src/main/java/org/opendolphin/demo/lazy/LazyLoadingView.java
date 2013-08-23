@@ -156,7 +156,6 @@ public class LazyLoadingView extends Application {
         JFXBinder.bind(FIRST_LAST).of(dataMold).to(FX.TEXT).of(nameField);
         JFXBinder.bind(CITY).of(dataMold).to(FX.TEXT).of(cityField);
         JFXBinder.bind(PHONE).of(dataMold).to(FX.TEXT).of(phoneField);
-        JFXBinder.bind(PHONE).of(dataMold).to(FX.TEXT).of(phoneField);
 
         // count the number of lazily loaded pms by listing to the model store
         final Counter counter = new Counter();
