@@ -231,10 +231,10 @@ public class PushView extends Application {
         });
 
         JFXBinder.bind(VehicleConstants.ATT_Y).of(selectedVehicle).to(FX.TEXT).of(selY); // example of a "bidirectional" binding
-        JFXBinder.bind(FX.TEXT).of(selY).to(VehicleConstants.ATT_Y).of(selectedVehicle, new StringToIntegerConverter());
+        JFXBinder.bind(FX.TEXT).of(selY).using(new StringToIntegerConverter()).to(VehicleConstants.ATT_Y).of(selectedVehicle);
 
-        JFXBinder.bind(VehicleConstants.ATT_COLOR).of(selectedVehicle).to(FX.FILL).of(selRect, new StringToColorConverter());
-        JFXBinder.bind(VehicleConstants.ATT_ROTATE).of(selectedVehicle).to(FX.ROTATE).of(selAngle, new StringToDoubleConverter());
+        JFXBinder.bind(VehicleConstants.ATT_COLOR).of(selectedVehicle).using(new StringToColorConverter()).to(FX.FILL).of(selRect);
+        JFXBinder.bind(VehicleConstants.ATT_ROTATE).of(selectedVehicle).using(new StringToDoubleConverter()).to(FX.ROTATE).of(selAngle);
 
         // bind 'selectedItem' of table.selectionModel to { ... }
         table.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
@@ -300,24 +300,24 @@ public class PushView extends Application {
         return selRect;
     }
 
-    private class StringToColorConverter implements Converter {
+    private class StringToColorConverter implements Converter<String, Paint> {
         @Override
-        public Object convert(Object value) {
-            return (value == null) ? Color.TRANSPARENT : Paint.valueOf(value.toString());
+        public Paint convert(String value) {
+            return (value == null) ? Color.TRANSPARENT : Paint.valueOf(value);
         }
     }
 
-    private class StringToIntegerConverter implements Converter {
+    private class StringToIntegerConverter implements Converter<String, Integer> {
         @Override
-        public Object convert(Object value) {
-            return (value == null) ? 0 : Integer.valueOf(value.toString());
+        public Integer convert(String value) {
+            return (value == null) ? 0 : Integer.valueOf(value);
         }
     }
 
-    private class StringToDoubleConverter implements Converter {
+    private class StringToDoubleConverter implements Converter<String, Double> {
         @Override
-        public Object convert(Object value) {
-            return (value == null) ? 0 : Double.valueOf(value.toString());
+        public Double convert(String value) {
+            return (value == null) ? 0 : Double.valueOf(value);
         }
     }
 
