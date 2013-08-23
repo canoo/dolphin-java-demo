@@ -31,6 +31,7 @@ import javafx.event.EventType;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -57,6 +58,7 @@ import org.opendolphin.core.client.ClientDolphin;
 import org.opendolphin.core.client.ClientPresentationModel;
 import org.opendolphin.core.client.comm.OnFinishedHandlerAdapter;
 import org.opendolphin.demo.FX;
+import org.opendolphin.logo.DolphinLogoBuilder;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -137,15 +139,17 @@ public class PushView extends Application {
         JavaFxUtil.value(VehicleConstants.ATT_Y, columnY);
         JavaFxUtil.value(VehicleConstants.ATT_ROTATE, columnA);
 
-//        // TODO: Logo can currently only added using GroovyFX
-//        DolphinLogo logo = new DolphinLogo();
-//        logo.setWidth(401);
-//        logo.setHeight(257);
-//            logo.opacity = 0.1d
+        Rectangle rigidArea = RectangleBuilder.create().width(400).height(400).fill(Color.TRANSPARENT).build();
+        Node dolphinLogo = new DolphinLogoBuilder().width(400).height(250).build();
+        dolphinLogo.setOpacity(0.1);
+
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().add(rigidArea);
+        stackPane.getChildren().add(dolphinLogo);
 
         final Group parent = new Group();
         parent.setEffect(createDropShadow());
-        parent.getChildren().add(RectangleBuilder.create().width(400).height(400).fill(Color.TRANSPARENT).build()); // rigid area
+        parent.getChildren().add(stackPane);
 
         BorderPane borderPane = new BorderPane();
         borderPane.setPadding(new Insets(20, 20, 20, 20));
